@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml;
 using System.IO;
 
@@ -10,12 +8,12 @@ namespace TeclasMnuATeclasMnuXml
     /// <summary>
     /// Exporta un archivo clásico TECLAS.MNU al formato TECLAS.MNU.XML.
     /// </summary>
-    class Program
+    internal class Program
     {
         private static string archivoEntrada;
         private static string archivoSalida;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.WriteLine("Transformador de archivos teclas.mnu a teclas.keyboard.xml\n");
 
@@ -23,8 +21,7 @@ namespace TeclasMnuATeclasMnuXml
                 return;
 
 
-            XmlWriterSettings parámetrosXml = new XmlWriterSettings();
-            parámetrosXml.Indent = true;
+            var parámetrosXml = new XmlWriterSettings {Indent = true};
 
             XmlWriter escritor;
             try
@@ -38,34 +35,32 @@ namespace TeclasMnuATeclasMnuXml
                 return;
             }
 
-            int erroresLocalizados = 0;
-            using (StreamReader lector = new StreamReader(archivoEntrada))
+            var erroresLocalizados = 0;
+            using (var lector = new StreamReader(archivoEntrada))
             {
                 escritor.WriteStartDocument();
                 escritor.WriteStartElement("Keyboard", "http://schemas.digi21.net/Digi3D/keyboard/v1.0");
 
-                string línea = lector.ReadLine();
+                var línea = lector.ReadLine();
                 while (línea != null)
                 {
                     try
                     {
-                        string[] partes = línea.Split(new[] {' '}, 2);
+                        var partes = línea.Split(new[] {' '}, 2);
 
                         if (partes.Length != 2)
                             continue;
 
-                        int teclaDigi21 = int.Parse(partes[0]);
+                        var teclaDigi21 = int.Parse(partes[0]);
 
-                        if (!diccionario.ContainsKey(teclaDigi21))
+                        if (!Diccionario.ContainsKey(teclaDigi21))
                         {
                             ++erroresLocalizados;
-                            Console.WriteLine(string.Format("No ha sido posible traducir la tecla con número: {0} ({1})",
-                                teclaDigi21,
-                                partes[1]));
+                            Console.WriteLine($"No ha sido posible traducir la tecla con número: {teclaDigi21} ({partes[1]})");
                             continue;
                         }
 
-                        DatosTecla datosTecla = diccionario[teclaDigi21];
+                        var datosTecla = Diccionario[teclaDigi21];
 
                         escritor.WriteStartElement("Key");
                         escritor.WriteAttributeString("Name", datosTecla.Nombre);
@@ -81,6 +76,7 @@ namespace TeclasMnuATeclasMnuXml
                     }
                     catch (Exception)
                     {
+                        // ignored
                     }
                     finally
                     {
@@ -93,10 +89,9 @@ namespace TeclasMnuATeclasMnuXml
             escritor.Flush();
             escritor.Close();
 
-            if (0 == erroresLocalizados)
-                Console.WriteLine("Archivo traducido satisfactoriamente.");
-            else
-                Console.WriteLine(string.Format("Se han localizado: {0} errores.", erroresLocalizados));
+            Console.WriteLine(0 == erroresLocalizados
+                ? "Archivo traducido satisfactoriamente."
+                : $"Se han localizado: {erroresLocalizados} errores.");
         }
 
         private static bool CompruebaParametros(string[] args)
@@ -115,20 +110,15 @@ namespace TeclasMnuATeclasMnuXml
                 return false;
             }
 
-            archivoSalida = string.Format("{0}\\{1}.keyboard.xml",
-                Path.GetDirectoryName(archivoEntrada),
-                Path.GetFileNameWithoutExtension(archivoEntrada));
+            archivoSalida =$"{Path.GetDirectoryName(archivoEntrada)}\\{Path.GetFileNameWithoutExtension(archivoEntrada)}.keyboard.xml";
 
-            if (File.Exists(archivoSalida))
-            {
-                Console.Error.WriteLine("Error: Ya existe el archivo: {0}. Este programa no sobreescribe archivos por seguridad.",
-                    archivoSalida);
-                return false;
-            }
-            return true;
+            if (!File.Exists(archivoSalida)) return true;
+            Console.Error.WriteLine("Error: Ya existe el archivo: {0}. Este programa no sobreescribe archivos por seguridad.",
+                archivoSalida);
+            return false;
         }
 
-        private static Dictionary<int, DatosTecla> diccionario = new Dictionary<int, DatosTecla>
+        private static readonly Dictionary<int, DatosTecla> Diccionario = new Dictionary<int, DatosTecla>
         {
 	        { 283, new DatosTecla("ESC", false, false, false) },
 	        { 15104, new DatosTecla("F1", false, false, false) },

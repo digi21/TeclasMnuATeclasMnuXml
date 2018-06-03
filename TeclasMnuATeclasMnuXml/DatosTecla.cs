@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace TeclasMnuATeclasMnuXml
+﻿namespace TeclasMnuATeclasMnuXml
 {
-    struct DatosTecla
+    internal struct DatosTecla
     {
         public string Nombre;
         public bool Control;
@@ -14,10 +9,10 @@ namespace TeclasMnuATeclasMnuXml
 
         public DatosTecla(string nombre, bool control, bool may, bool alt)
         {
-            this.Nombre = nombre;
-            this.Control = control;
-            this.Mayusculas = may;
-            this.Alt = alt;
+            Nombre = nombre;
+            Control = control;
+            Mayusculas = may;
+            Alt = alt;
         }
     };
 }
