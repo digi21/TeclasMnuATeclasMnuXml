@@ -179,11 +179,9 @@ namespace TeclasMnuATeclasMnuXml
             {11008, new DatosTecla("#", false, false, true)},
             {32512, new DatosTecla("INSERT", false, false, true)},
             {30208, new DatosTecla("PGUP", false, false, true)},
-            {
-                22016, new DatosTecla("\", false, false, true) },
-                    {11264, new DatosTecla("Z", false, false, true)},
-                { 11520, new DatosTecla("X", false, false, true)
-            },
+            {22016, new DatosTecla("\\", false, false, true) },
+            {11264, new DatosTecla("Z", false, false, true)},
+            {11520, new DatosTecla("X", false, false, true)},
             {11776, new DatosTecla("C", false, false, true)},
             {12032, new DatosTecla("V", false, false, true)},
             {12288, new DatosTecla("B", false, false, true)},
